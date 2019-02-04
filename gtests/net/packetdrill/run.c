@@ -34,6 +34,7 @@
 #include <sys/mman.h>
 #include <sys/socket.h>
 #include <sys/times.h>
+#include <time.h>
 #include <unistd.h>
 #include "ip.h"
 #include "logging.h"
@@ -565,6 +566,7 @@ void run_script(struct config *config, struct script *script)
 	state->live_start_time_usecs = schedule_start_time_usecs();
 	DEBUGP("live_start_time_usecs is %lld\n",
 	       state->live_start_time_usecs);
+        write(1, "START", 5);
 
 	if (state->wire_client != NULL)
 		wire_client_send_client_starting(state->wire_client);
@@ -618,6 +620,8 @@ void run_script(struct config *config, struct script *script)
 	/* Wait for any outstanding packet events we requested on the server. */
 	if (state->wire_client != NULL)
 		wire_client_next_event(state->wire_client, NULL);
+
+        write(1, "STOP", 4);
 
 	if (code_execute(state->code, &error)) {
 		char *script_path = strdup(state->config->script_path);
